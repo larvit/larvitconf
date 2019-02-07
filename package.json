@@ -1,0 +1,33 @@
+{
+	"name": "larvitconf",
+	"version": "0.0.1",
+	"description": "Configuration lib",
+	"main": "index.js",
+	"devDependencies": {
+		"mocha": "^3.2.0",
+		"mocha-eslint": "^3.0.1"
+	},
+	"scripts": {
+		"test": "mocha"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/larvit/larvitconf.git"
+	},
+	"keywords": [
+		"misc",
+		"uuid",
+		"replaceAll"
+	],
+	"author": "gagge <gagge@larvit.se>",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/larvit/larvitconf/issues"
+	},
+	"homepage": "https://github.com/larvit/larvitconf#readme",
+	"dependencies": {
+		"async": "^2.6.1",
+		"larvitutils": "^2.1.0",
+		"winston": "^2.4.4"
+	}
+}
