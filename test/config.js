@@ -36,15 +36,18 @@ describe('Configurations', function () {
 		tasks.push(function (cb) {
 			config.loadConfigs(function (err, configuration) {
 				assert.notEqual(configuration, undefined);
-				assert.strictEqual(typeof configuration.staticConfig1, 'object');
-				assert.strictEqual(typeof configuration.staticConfig2, 'object');
-				assert.strictEqual(typeof configuration.envConfig1, 'object');
-				assert.strictEqual(typeof configuration.envConfig1, 'object');
+				assert.notEqual(configuration.statics, undefined);
+				assert.notEqual(configuration.envs, undefined);
 
-				assert.strictEqual(configuration.staticConfig1.testConfigFile, 'defaultStaticConfig1.json');
-				assert.strictEqual(configuration.staticConfig2.testConfigFile, 'defaultStaticConfig2.json');
-				assert.strictEqual(configuration.envConfig1.testConfigFile, 'defaultEnvConfig1.json');
-				assert.strictEqual(configuration.envConfig2.testConfigFile, 'defaultEnvConfig2.json');
+				assert.strictEqual(typeof configuration.statics.staticConfig1, 'object');
+				assert.strictEqual(typeof configuration.statics.staticConfig2, 'object');
+				assert.strictEqual(typeof configuration.envs.envConfig1, 'object');
+				assert.strictEqual(typeof configuration.envs.envConfig1, 'object');
+
+				assert.strictEqual(configuration.statics.staticConfig1.testConfigFile, 'defaultStaticConfig1.json');
+				assert.strictEqual(configuration.statics.staticConfig2.testConfigFile, 'defaultStaticConfig2.json');
+				assert.strictEqual(configuration.envs.envConfig1.testConfigFile, 'defaultEnvConfig1.json');
+				assert.strictEqual(configuration.envs.envConfig2.testConfigFile, 'defaultEnvConfig2.json');
 
 				cb();
 			});
@@ -61,23 +64,26 @@ describe('Configurations', function () {
 		tasks.push(function (cb) {
 			config = new Config({
 				'log':	log,
-				'pathToStatics': __dirname + '/config/statics/',
-				'pathToEnvs': __dirname + '/config/envs/'
+				'configPath': __dirname + '/config/'
 			}, cb);
 		});
 
 		tasks.push(function (cb) {
 			config.loadConfigs(function (err, configuration) {
-				assert.notEqual(configuration, undefined);
-				assert.strictEqual(typeof configuration.staticConfig1, 'object');
-				assert.strictEqual(typeof configuration.staticConfig2, 'object');
-				assert.strictEqual(typeof configuration.envConfig1, 'object');
-				assert.strictEqual(typeof configuration.envConfig1, 'object');
 
-				assert.strictEqual(configuration.staticConfig1.testConfigFile, 'specificStaticConfig1.json');
-				assert.strictEqual(configuration.staticConfig2.testConfigFile, 'specificStaticConfig2.json');
-				assert.strictEqual(configuration.envConfig1.testConfigFile, 'specificEnvConfig1.json');
-				assert.strictEqual(configuration.envConfig2.testConfigFile, 'specificEnvConfig2.json');
+				assert.notEqual(configuration, undefined);
+				assert.notEqual(configuration.statics, undefined);
+				assert.notEqual(configuration.envs, undefined);
+
+				assert.strictEqual(typeof configuration.statics.staticConfig1, 'object');
+				assert.strictEqual(typeof configuration.statics.staticConfig2, 'object');
+				assert.strictEqual(typeof configuration.envs.envConfig1, 'object');
+				assert.strictEqual(typeof configuration.envs.envConfig1, 'object');
+
+				assert.strictEqual(configuration.statics.staticConfig1.testConfigFile, 'specificStaticConfig1.json');
+				assert.strictEqual(configuration.statics.staticConfig2.testConfigFile, 'specificStaticConfig2.json');
+				assert.strictEqual(configuration.envs.envConfig1.testConfigFile, 'specificEnvConfig1.json');
+				assert.strictEqual(configuration.envs.envConfig2.testConfigFile, 'specificEnvConfig2.json');
 
 				cb();
 			});
