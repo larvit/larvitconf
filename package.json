@@ -4,8 +4,9 @@
 	"description": "Configuration lib",
 	"main": "index.js",
 	"devDependencies": {
-		"mocha": "^3.2.0",
-		"mocha-eslint": "^3.0.1"
+		"eslint": "^4.8.0",
+		"mocha": "^4.0.1",
+		"mocha-eslint": "^4.1.0"
 	},
 	"scripts": {
 		"test": "mocha"
