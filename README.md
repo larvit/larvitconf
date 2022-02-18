@@ -6,12 +6,12 @@ larvitconf is configuration loading library that take options and load json file
 
 ```
 let options = {
-	'required_files': [
+	'requiredFiles': [
 		'configFile1.json',
 		'/subFolder/configFile2.json',
 		'/subFolder/subFolder2/configFile3.json'
 	],
-	'config_folder': '/srv/application/config/' // Optional
+	'configFolder': '/srv/application/config/' // Optional
 };
 
 configLib.loadConfigs(options, function (err, config) {
@@ -32,8 +32,14 @@ Code above returns a json object that look like this.
 			}
 		}
 	},
-	config_folder: '/srv/application/config/'
+	configFolder: '/srv/application/config/'
 }
 ```
 
-"config_folder" is optional and if not specified the lib will look in the folder where the process is run and in it's subfolder "config/"
+"configFolder" is optional and if not specified the lib will look in the folder where the process is run and in it's subfolder "config/"
+
+# Changelog
+## 0.1.0
+- required_files => requiredFiles
+- config_folder => configFolder
+- Upped lib versions

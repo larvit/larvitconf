@@ -1,141 +1,109 @@
 'use strict';
 
-const	assert	= require('assert');
-const	configLib	= require('../index.js');
-const	log = require('winston');
+const { Log } = require('larvitutils');
+const assert = require('assert');
+const configLib = require('../index.js');
 
-// Set up winsston
-log.remove(log.transports.Console);
-/**/log.add(log.transports.Console, {
-	'level': 'warn',
-	'colorize': true,
-	'timestamp': true,
-	'json': false
-});/**/
-
-before(function (done) {
-	done();
-});
+const log = new Log();
 
 describe('Configurations', function () {
-	it('Should load configs files in default path if no path was given', function (done) {
-		let options = {
-			'required_files': [
+	it('Should load configs files in default path if no path was given', async () => {
+		const options = {
+			requiredFiles: [
 				'statics/staticConfig1.json',
 				'/statics/staticConfig2.json',
 				'envs/envConfig1.json',
 				'/envs/envConfig2.json',
 				'envs/badgers/individuals.json',
-				'/envs/badgers/honeybadgers/individuals.json'
+				'/envs/badgers/honeybadgers/individuals.json',
 			],
-			'log': log
+			log,
 		};
 
-		configLib.loadConfigs(options, function (err, result) {
-			if (err) throw err;
+		const result = await configLib.loadConfigs(options);
+		assert.notEqual(result.configFolder, undefined);
+		assert.notEqual(result.configs, undefined);
+		assert.notEqual(result.configs.statics, undefined);
+		assert.notEqual(result.configs.envs, undefined);
 
-			assert.notEqual(result.config_folder, undefined);
-			assert.notEqual(result.configs, undefined);
-			assert.notEqual(result.configs.statics, undefined);
-			assert.notEqual(result.configs.envs, undefined);
+		assert.strictEqual(result.configs.statics.staticConfig1.testConfigFile, 'defaultStaticConfig1.json');
+		assert.strictEqual(result.configs.statics.staticConfig2.testConfigFile, 'defaultStaticConfig2.json');
+		assert.strictEqual(result.configs.envs.envConfig1.testConfigFile, 'defaultEnvConfig1.json');
+		assert.strictEqual(result.configs.envs.envConfig2.testConfigFile, 'defaultEnvConfig2.json');
 
-			assert.strictEqual(typeof result.configs.statics.staticConfig1, 'object');
-			assert.strictEqual(typeof result.configs.statics.staticConfig2, 'object');
-			assert.strictEqual(typeof result.configs.envs.envConfig1, 'object');
-			assert.strictEqual(typeof result.configs.envs.envConfig1, 'object');
-
-			assert.strictEqual(result.configs.statics.staticConfig1.testConfigFile, 'defaultStaticConfig1.json');
-			assert.strictEqual(result.configs.statics.staticConfig2.testConfigFile, 'defaultStaticConfig2.json');
-			assert.strictEqual(result.configs.envs.envConfig1.testConfigFile, 'defaultEnvConfig1.json');
-			assert.strictEqual(result.configs.envs.envConfig2.testConfigFile, 'defaultEnvConfig2.json');
-
-			assert.strictEqual(result.configs.envs.badgers.individuals.testConfigFile, 'individuals.json');
-			assert.strictEqual(result.configs.envs.badgers.honeybadgers.individuals.testConfigFile, 'individuals.json');
-
-
-			done();
-		});
+		assert.strictEqual(result.configs.envs.badgers.individuals.testConfigFile, 'individuals.json');
+		assert.strictEqual(result.configs.envs.badgers.honeybadgers.individuals.testConfigFile, 'individuals.json');
 	});
 
-	it('Should load configs when specific paths are given', function (done) {
+	it('Should load configs when specific paths are given', async () => {
 		let options = {
-			'required_files': [
+			requiredFiles: [
 				'statics/staticConfig1.json',
 				'/statics/staticConfig2.json',
 				'envs/envConfig1.json',
 				'/envs/envConfig2.json',
 				'envs/badgers/individuals.json',
-				'/envs/badgers/honeybadgers/individuals.json'
+				'/envs/badgers/honeybadgers/individuals.json',
 			],
-			'config_folder': __dirname + '/config/',
-			'log': log
+			configFolder: __dirname + '/config/',
+			log,
 		};
 
-		configLib.loadConfigs(options, function (err, result) {
-			if (err) throw err;
+		const result = await configLib.loadConfigs(options);
+		assert.strictEqual(result.configs.statics.staticConfig1.testConfigFile, 'specificStaticConfig1.json');
+		assert.strictEqual(result.configs.statics.staticConfig2.testConfigFile, 'specificStaticConfig2.json');
+		assert.strictEqual(result.configs.envs.envConfig1.testConfigFile, 'specificEnvConfig1.json');
+		assert.strictEqual(result.configs.envs.envConfig2.testConfigFile, 'specificEnvConfig2.json');
+		assert.strictEqual(result.configs.envs.badgers.individuals.testConfigFile, 'specificIndividuals.json');
+		assert.strictEqual(result.configs.envs.badgers.honeybadgers.individuals.testConfigFile, 'specificIndividuals.json');
+	});
 
-			assert.notEqual(result.config_folder, undefined);
-			assert.notEqual(result.configs, undefined);
-			assert.notEqual(result.configs.statics, undefined);
-			assert.notEqual(result.configs.envs, undefined);
+	it('Should construct with no log provided', async () => {
+		let options = {
+			requiredFiles: [
+				'statics/staticConfig1.json',
+			],
+			configFolder: __dirname + '/config/',
+		};
 
-			assert.strictEqual(typeof result.configs.statics.staticConfig1, 'object');
-			assert.strictEqual(typeof result.configs.statics.staticConfig2, 'object');
-			assert.strictEqual(typeof result.configs.envs.envConfig1, 'object');
-			assert.strictEqual(typeof result.configs.envs.envConfig1, 'object');
+		await assert.doesNotReject(async () => await configLib.loadConfigs(options));
+	});
 
-			assert.strictEqual(result.configs.statics.staticConfig1.testConfigFile, 'specificStaticConfig1.json');
-			assert.strictEqual(result.configs.statics.staticConfig2.testConfigFile, 'specificStaticConfig2.json');
-			assert.strictEqual(result.configs.envs.envConfig1.testConfigFile, 'specificEnvConfig1.json');
-			assert.strictEqual(result.configs.envs.envConfig2.testConfigFile, 'specificEnvConfig2.json');
+	it('Should get an error if configfile isn\'t valid json', async () => {
+		let options = {
+			requiredFiles: [
+				'invalidFile.json',
+			],
+			configFolder: __dirname + '/config/',
+			log,
+		};
 
-			assert.strictEqual(result.configs.envs.badgers.individuals.testConfigFile, 'specificIndividuals.json');
-			assert.strictEqual(result.configs.envs.badgers.honeybadgers.individuals.testConfigFile, 'specificIndividuals.json');
+		await assert.rejects(async () => await configLib.loadConfigs(options), new Error('Configfile "invalidFile.json" is not a valid json-file: Unexpected token T in JSON at position 0'));
+	});
 
-			done();
+	it('Should get an error if configfile isn\'t found', async () => {
+		let options = {
+			requiredFiles: [
+				'nonExistingFile.json',
+			],
+			configFolder: __dirname + '/config/',
+			log: log,
+		};
+
+		await assert.rejects(async () => await configLib.loadConfigs(options), err => {
+			assert.ok(err.message.includes('ENOENT: no such file or directory'));
+
+			return true;
 		});
 	});
 
-	it('Should get an error if configfile isn\'t valid json', function (done) {
+	it('Should get an error if no configfiles specified', async () => {
 		let options = {
-			'required_files': [
-				'invalidFile.json'
-			],
-			'config_folder': __dirname + '/config/',
-			'log': log
+			requiredFiles: [],
+			configFolder: __dirname + '/config/',
+			log: log,
 		};
 
-		configLib.loadConfigs(options, function (err) {
-			assert.notEqual(err, null);
-			done();
-		});
-	});
-
-	it('Should get an error if configfile isn\'t found', function (done) {
-		let options = {
-			'required_files': [
-				'nonExistingFile.json'
-			],
-			'config_folder': __dirname + '/config/',
-			'log': log
-		};
-
-		configLib.loadConfigs(options, function (err) {
-			assert.notEqual(err, null);
-			done();
-		});
-	});
-
-	it('Should get an error if no configfiles specified', function (done) {
-		let options = {
-			'required_files': [],
-			'config_folder': __dirname + '/config/',
-			'log': log
-		};
-
-		configLib.loadConfigs(options, function (err) {
-			assert.notEqual(err, null);
-			done();
-		});
+		await assert.rejects(async () => await configLib.loadConfigs(options), new Error('No config files specified.'));
 	});
 });

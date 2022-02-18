@@ -1,15 +1,21 @@
 {
 	"name": "larvitconf",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Configuration lib",
 	"main": "index.js",
+	"files": [
+		"*.js"
+	],
 	"devDependencies": {
-		"eslint": "^4.8.0",
-		"mocha": "^4.0.1",
-		"mocha-eslint": "^4.1.0"
+		"eslint": "8.9.0",
+		"mocha": "9.2.0",
+		"nyc": "^15.1.0"
 	},
 	"scripts": {
-		"test": "mocha"
+		"lint": "eslint *.js test/*.js",
+		"test:unit": "mocha --exit --bail './test/*.js'",
+		"coverage": "nyc npm run test:unit",
+		"test": "npm run lint && npm run coverage"
 	},
 	"repository": {
 		"type": "git",
@@ -27,8 +33,7 @@
 	},
 	"homepage": "https://github.com/larvit/larvitconf#readme",
 	"dependencies": {
-		"async": "^2.6.1",
-		"larvitutils": "^2.1.0",
-		"winston": "^2.4.4"
+		"larvitutils": "5.0.0",
+		"lodash": "4.17.21"
 	}
 }
