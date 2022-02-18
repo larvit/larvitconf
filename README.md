@@ -14,9 +14,8 @@ let options = {
 	'configFolder': '/srv/application/config/' // Optional
 };
 
-configLib.loadConfigs(options, function (err, config) {
-	console.log(config);
-});
+const config = await configLib.loadConfigs(options); // throws on error
+console.log(config);
 ```
 
 Code above returns a json object that look like this.
@@ -43,3 +42,4 @@ Code above returns a json object that look like this.
 - required_files => requiredFiles
 - config_folder => configFolder
 - Upped lib versions
+- Return promise instead of taking callback
