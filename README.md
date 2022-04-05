@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/larvit/larvitconf/actions/workflows/ci.yml/badge.svg)](https://github.com/larvit/larvitconf/actions)
+
 # larvitconf
 
 larvitconf is configuration loading library that take options and load json files in to a json object.
