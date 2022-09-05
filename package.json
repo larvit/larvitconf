@@ -1,6 +1,6 @@
 {
 	"name": "larvitconf",
-	"version": "0.1.16",
+	"version": "0.1.17",
 	"description": "Configuration lib",
 	"main": "index.js",
 	"files": [
@@ -33,7 +33,7 @@
 	},
 	"homepage": "https://github.com/larvit/larvitconf#readme",
 	"dependencies": {
-		"larvitutils": "5.1.4",
+		"larvitutils": "5.1.5",
 		"lodash": "4.17.21"
 	}
 }
