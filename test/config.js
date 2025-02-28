@@ -6,7 +6,7 @@ const configLib = require('../index.js');
 
 const log = new Log();
 
-describe('Configurations', function () {
+describe('Configurations', () => {
 	it('Should load configs files in default path if no path was given', async () => {
 		const options = {
 			requiredFiles: [
@@ -105,5 +105,95 @@ describe('Configurations', function () {
 		};
 
 		await assert.rejects(async () => await configLib.loadConfigs(options), new Error('No config files specified.'));
+	});
+
+	it('Should override with env variable if set', async () => {
+		process.env['envConfig1__testConfigFile'] = '"override"';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig1.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs.envConfig1.testConfigFile, 'override');
+	});
+
+	it('Should not override with env variable if envOverride option is not set to true', async () => {
+		process.env['envConfig1__testConfigFile'] = '"override"';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig1.json'],
+			log,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs.envConfig1.testConfigFile, 'specificEnvConfig1.json');
+	});
+
+	it('Should add to config with env variable even if not set', async () => {
+		process.env['envConfig1__newKey'] = '"value"';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig1.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs.envConfig1.newKey, 'value');
+	});
+
+	it('Should parse json value from env override', async () => {
+		process.env['envConfig1__anArray'] = '["value","value2"]';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig1.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.deepEqual(config.configs.envs.envConfig1.anArray, ['value', 'value2']);
+	});
+
+	it('Should override with env variable in deep object structure', async () => {
+		process.env['envConfig2__a__nested__object__key'] = '5';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig2.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs.envConfig2.a.nested.object.key, 5);
+	});
+
+	it('Should not override if env override value is bad json', async () => {
+		process.env['envConfig1__testConfigFile'] = 'this is not quoted';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['envs/envConfig1.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs.envConfig1.testConfigFile, 'specificEnvConfig1.json');
+	});
+
+	it('Should not override if there is no file to override', async () => {
+		process.env['envConfig1__testConfigFile'] = 'this is not quoted';
+		let options = {
+			configFolder: __dirname + '/config/',
+			requiredFiles: ['statics/staticConfig1.json'],
+			log,
+			envOverride: true,
+		};
+
+		const config = await configLib.loadConfigs(options);
+		assert.strictEqual(config.configs.envs, undefined);
 	});
 });

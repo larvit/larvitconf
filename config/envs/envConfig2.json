@@ -1,3 +1,10 @@
 {
-	"testConfigFile": "defaultEnvConfig2.json"
+	"testConfigFile": "defaultEnvConfig2.json",
+	"a": {
+		"nested": {
+			"object": {
+				"key": 12
+			}
+		}
+	}
 }

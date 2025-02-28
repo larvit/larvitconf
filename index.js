@@ -23,6 +23,8 @@ async function loadConfigs(options) {
 
 	result.configFolder = options.configFolder;
 
+	const envEntries = Object.entries(process.env);
+
 	// Load config files
 	for (const file of options.requiredFiles) {
 		const filePath = path.join(options.configFolder, file);
@@ -44,13 +46,37 @@ async function loadConfigs(options) {
 
 		let tmpObj = {};
 		let configObj = tmpObj = {};
+		let fileNameWithoutJson = '';
 
 		for (let i = 0; i < split.length; i++) {
 			if (i === split.length - 1) {
-				const fileNameWithoutJson = split[i].substring(0, split[i].length - 5);
+				fileNameWithoutJson = split[i].substring(0, split[i].length - 5);
 				tmpObj = tmpObj[fileNameWithoutJson] = parsedFile;
 			} else {
 				tmpObj = tmpObj[split[i]] = {};
+			}
+		}
+
+		// Override with env variables if set
+		if (options.envOverride && configObj.envs) {
+			const envOverridesEntries = envEntries.filter(entry => entry[0].startsWith(fileNameWithoutJson + '__'));
+			for (const envOverrideEntry of envOverridesEntries) {
+				const keySplits = envOverrideEntry[0].split('__');
+				let currentValue = configObj.envs;
+				for (let i = 0; i < keySplits.length - 1; i++) {
+					const key = keySplits[i];
+					currentValue[key] = currentValue[key] || {};
+					currentValue = currentValue[key];
+				}
+
+				try {
+					const value = JSON.parse(envOverrideEntry[1]);
+					currentValue[keySplits[keySplits.length - 1]] = value;
+				} catch (err) {
+					log.warn(logPrefix + 'Bad JSON in env override for key: ' + envOverrideEntry[0] + ' - ' + err.message);
+					continue;
+				}
+
 			}
 		}
 
