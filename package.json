@@ -1,6 +1,6 @@
 {
 	"name": "larvitconf",
-	"version": "0.2.36",
+	"version": "0.2.37",
 	"description": "Configuration lib",
 	"main": "index.js",
 	"files": [
@@ -8,7 +8,7 @@
 	],
 	"devDependencies": {
 		"eslint": "8.57.1",
-		"mocha": "11.7.6",
+		"mocha": "11.8.0",
 		"nyc": "18.0.0"
 	},
 	"scripts": {
@@ -33,7 +33,7 @@
 	},
 	"homepage": "https://github.com/larvit/larvitconf#readme",
 	"dependencies": {
-		"larvitutils": "5.1.203",
+		"larvitutils": "5.1.204",
 		"lodash": "4.18.1"
 	}
 }
