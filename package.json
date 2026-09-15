@@ -1,13 +1,13 @@
 {
 	"name": "larvitconf",
-	"version": "0.2.39",
+	"version": "0.2.40",
 	"description": "Configuration lib",
 	"main": "index.js",
 	"files": [
 		"*.js"
 	],
 	"devDependencies": {
-		"eslint": "8.57.1",
+		"eslint": "10.10.0",
 		"mocha": "11.8.0",
 		"nyc": "18.0.0"
 	},
